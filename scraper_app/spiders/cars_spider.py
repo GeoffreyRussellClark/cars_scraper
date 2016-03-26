@@ -12,12 +12,13 @@ class CarsNationalSpider(CrawlSpider):
     """Spider for regularly updated cars.brick7.co.za website"""
     name = "UsedCarsNational"
     allowed_domains = ["cars.brick7.co.za"]
-    start_urls = ["http://www.cars.brick7.co.za/price/honda/"]
+    start_urls = ["http://www.cars.brick7.co.za/price/"]
 	
     rules = [
+        Rule(LinkExtractor(restrict_xpaths='//div/div[@class="cat_bg"]/ul[@class="list_col4"]/li/a'), callback="parse_items", follow=True),
 		Rule(LinkExtractor(restrict_xpaths='//div/div[@class="cat_bg"]/div[@id="price_list"]/ul[@class="price_list_col2"]/li[@class="pb2"]/ul/li[@class="bold"]/a'), callback="parse_items", follow=True),
     ]
-
+    
     cars_list_xpath = '//div/div[@class="cat_bg"]/div[@class="fl width_70"]/div[@id="price_list"]/ul[@class="price_list_col2"]/li/ul'
     item_fields = {
 		'MakeModelLocation': './/li[@class="li15 bold"]/a/@title',

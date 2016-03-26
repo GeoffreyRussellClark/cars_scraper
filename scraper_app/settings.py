@@ -15,8 +15,8 @@ DATABASE = {
 }
 
 #To enable us to follow paths
-DEPTH_LIMIT = 1
-DEPTH_PRIORITY = 1
+DEPTH_LIMIT = 2
+DEPTH_PRIORITY = 2
 
 #slow down the bot so that it doesn't put too much pressure on the website
 DOWNLOAD_DELAY = 2
