@@ -21,11 +21,19 @@ class CarsNationalSpider(CrawlSpider):
     
     cars_list_xpath = '//div/div[@class="cat_bg"]/div[@class="fl width_70"]/div[@id="price_list"]/ul[@class="price_list_col2"]/li/ul'
     item_fields = {
-		'MakeModelLocation': './/li[@class="li15 bold"]/a/@title',
+		'TitleLocation': './/li[@class="li15 bold"]/a/@title',
 		'Year': './/li[@class="li15 bold"]/a/text()',
 		'Price': './/li[@class="li85"]/text()'
     }
-
+        
+    #the make and model will be the same for all data on a page 
+    #put into try/except so that intermediate car make pages don't give errors 
+    try:
+	    car_make = selector.xpath('//div[@class="bread_cum fl"]/a/text()').extract()[2]
+		car_model = selector.xpath('//div[@class="bread_cum fl"]/a/text()').extract()[3]
+    except Exception:
+	    pass
+		    
     def parse_items(self, response):
         
         #Default callback used by Scrapy to process downloaded responses
@@ -43,6 +51,10 @@ class CarsNationalSpider(CrawlSpider):
             # iterate over fields and add xpaths to the loader
             for field, xpath in self.item_fields.iteritems():
                 loader.add_xpath(field, xpath)
+            
+            loader.add_value('Make', car_make)
+			loader.add_value('Model', car_model)
+            
             yield loader.load_item()
 """            
 class CarsCitySpider(CrawlSpider):
@@ -64,12 +76,20 @@ class CarsCitySpider(CrawlSpider):
         
         selector = HtmlXPathSelector(response)
         CarsCities = selector.xpath('//div/div[@class="cat_bg"]/div[@class="fl width_70"]/div[@id="price_list"]/div')
-		
+        
+        #the make and model will be the same for all data on a page 
+        #put into try/except so that intermediate car make pages don't give errors 
+        try:
+		    car_make = selector.xpath('//div[@class="bread_cum fl"]/a/text()').extract()[2]
+		    car_model = selector.xpath('//div[@class="bread_cum fl"]/a/text()').extract()[3]
+        except Exception:
+		    pass
+			
         # iterate over cars
         for CarsCity in CarsCities:
             
             #the location is only mentioned once for all the years and prices.		
-			location_heading = CarsCity.xpath('.//div[@class="pt10"]/h2/a/text()').extract()
+			location_heading = CarsCity.xpath('.//div[@class="pt10"]/h2/a/@title').extract()
 			
 			for CarsCityLoc in CarsCity.xpath('.//ul/li/ul'):
 				loader = XPathItemLoader(UsedCars(), selector=CarsCityLoc)
@@ -80,7 +100,9 @@ class CarsCitySpider(CrawlSpider):
             
 				loader.add_xpath('Year', './/li[@class="li15 bold"]/text()')
 				loader.add_xpath('Price', './/li[@class="li85"]/text()')
-				loader.add_value('MakeModelLocation', location_heading)
+				loader.add_value('TitleLocation', location_heading)
+				loader.add_value('Make', car_make)
+				loader.add_value('Model', car_model)
 				
 				yield loader.load_item()
 

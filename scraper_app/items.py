@@ -2,6 +2,8 @@ from scrapy.item import Item, Field
 
 class UsedCars(Item):
     """UsedCars container (dictionary-like object) for scraped data"""
-    MakeModelLocation = Field()
+    Make = Field()
+    Model = Field()
+    TitleLocation = Field()
     Year = Field()
     Price = Field()

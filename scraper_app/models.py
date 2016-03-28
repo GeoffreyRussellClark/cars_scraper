@@ -23,6 +23,8 @@ class Cars(DeclarativeBase):
 	__tablename__ = "usedcars"
 	
 	id = Column(Integer, primary_key=True)
-	MakeModelLocation = Column('makemodellocation',String)
+	Make = Column('make',String)
+	Model = Column('model',String)
+	TitleLocation = Column('titlelocation',String)
 	Year = Column('year', String, nullable=True)
 	Price = Column('price', String, nullable=True)
