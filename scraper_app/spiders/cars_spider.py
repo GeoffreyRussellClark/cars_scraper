@@ -7,7 +7,7 @@ from scrapy.contrib.linkextractors import LinkExtractor
 from scraper_app.items import UsedCars
 
 #need to comment out one of the spiders - can only run one spider at a time.
-"""
+
 class CarsNationalSpider(CrawlSpider):
     #Spider for regularly updated cars.brick7.co.za website
     name = "UsedCarsNational"
@@ -25,21 +25,21 @@ class CarsNationalSpider(CrawlSpider):
 		'Year': './/li[@class="li15 bold"]/a/text()',
 		'Price': './/li[@class="li85"]/text()'
     }
-        
-    #the make and model will be the same for all data on a page 
-    #put into try/except so that intermediate car make pages don't give errors 
-    try:
-	    car_make = selector.xpath('//div[@class="bread_cum fl"]/a/text()').extract()[2]
-		car_model = selector.xpath('//div[@class="bread_cum fl"]/a/text()').extract()[3]
-    except Exception:
-	    pass
 		    
     def parse_items(self, response):
         
         #Default callback used by Scrapy to process downloaded responses
         
         selector = HtmlXPathSelector(response)
-
+		
+		#the make and model will be the same for all data on a page 
+		#put into try/except so that intermediate car make pages don't give errors 
+        try:
+			car_make = selector.xpath('//div[@class="bread_cum fl"]/a/text()').extract()[2]
+			car_model = selector.xpath('//div[@class="bread_cum fl"]/a/text()').extract()[3]
+        except Exception:
+			pass
+	    
         # iterate over deals
         for CarsNational in selector.xpath(self.cars_list_xpath):
             loader = XPathItemLoader(UsedCars(), selector=CarsNational)
@@ -53,7 +53,7 @@ class CarsNationalSpider(CrawlSpider):
                 loader.add_xpath(field, xpath)
             
             loader.add_value('Make', car_make)
-			loader.add_value('Model', car_model)
+            loader.add_value('Model', car_model)
             
             yield loader.load_item()
 """            
@@ -105,4 +105,4 @@ class CarsCitySpider(CrawlSpider):
 				loader.add_value('Model', car_model)
 				
 				yield loader.load_item()
-
+"""
