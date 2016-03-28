@@ -20,9 +20,9 @@ def create_cars_table(engine):
 	
 class Cars(DeclarativeBase):
 	"""Sqlalchemy Cars model"""
-	__tablename__ = "carsnational"
+	__tablename__ = "usedcars"
 	
 	id = Column(Integer, primary_key=True)
-	MakeModelLocation = Column('MakeModelLocation',String)
-	Year = Column('Year', String, nullable=True)
-	Price = Column('Price', String, nullable=True)
+	MakeModelLocation = Column('makemodellocation',String)
+	Year = Column('year', String, nullable=True)
+	Price = Column('price', String, nullable=True)
