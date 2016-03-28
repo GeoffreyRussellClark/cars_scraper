@@ -7,6 +7,7 @@ All items to do with building and parameterising a model that will enable us to 
 ### What is here so far: ###
 
 * Web-scraper built to scrape data from the SA car search engine "cars.brick7.co.za" 
+* Relatively clean dataset as output from the scraper in the file "clean_cars.csv" - this is to be used to parameterise the depreciation model. 
 
 ### About the web-scraper ###
 
@@ -25,6 +26,14 @@ All items to do with building and parameterising a model that will enable us to 
 * start the postgressql server "sudo service postgressql start"
 * run the spiders one at a time (national and city) simply by commenting out the spider that you don't want to run.
 * inspect the output in postgressql - the table name can be found in the model.py file.
+
+
+### Next steps: ###
+
+* Decide what value we want to pay out e.g retail value, trade-in value, replacement value, book value, etc.
+* Build model in Excel - parameterise based on the data in "clean_cars.csv" (possibly keep back some data for a test and validation set)
+* Test the model either on a test and validation subset of the data, or on another online website like cars.co.za
+* Build final model in python and deploy it to the python server.
 
 ### Who do I talk to? ###
 
