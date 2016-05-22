@@ -40,6 +40,7 @@ for key in keys:
     make = [];
     model = [];
     prices = [];
+    predType = [];
 
     for year in range(maxYear-minYear):
         years.append(minYear + year);
@@ -59,6 +60,7 @@ for key in keys:
         for proj_year in range(minYear,maxYear):
             est_price = price*(1+priceInflation)**(proj_year - year)
             prices.append(est_price)
+            predType.append("estimate")
 
         priceSet["price"] = prices
 
@@ -90,9 +92,14 @@ for key in keys:
         plt.yticks(())
         plt.show()"""
 
+        for proj_year in range(minYear, maxYear):
+            predType.append("model")
+
         # Predicting prices for each year
         est_price = regr.predict(np.asarray(years).reshape(-1,1))
         priceSet["price"] = est_price
+
+    priceSet["predType"] = predType;
 
     allPrices = pd.concat([allPrices, priceSet], axis=0)
 
