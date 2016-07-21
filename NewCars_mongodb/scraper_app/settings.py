@@ -3,7 +3,8 @@ BOT_NAME = 'NewCarsBot'
 
 SPIDER_MODULES = ['scraper_app.spiders']
 
-ITEM_PIPELINES = {'scraper_app.pipelines.NewCarsPipeline': 100}
+#Postgresql Pipeline
+'''ITEM_PIPELINES = {'scraper_app.pipelines.NewCarsPipeline': 100}
 
 DATABASE = {
 	'drivername': 'postgres',
@@ -12,7 +13,16 @@ DATABASE = {
 	'username': 'geoffrey',
 	'password': 'SouthernCross',
 	'database': 'scrape'
-}
+}'''
+
+#Mongo Pipeline
+ITEM_PIPELINES = {'scraper_app.pipelines.MongoPipeline': 100}
+
+MONGODB_SERVER = "localhost"
+MONGODB_PORT = 27017
+MONGODB_DB = "scrape"
+MONGODB_COLLECTION = "new_carscoza"
+
 
 #To enable us to follow paths
 DEPTH_LIMIT = 3
