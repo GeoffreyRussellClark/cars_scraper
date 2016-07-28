@@ -1,5 +1,46 @@
 from scrapy.item import Item, Field
 
+class UsedCarsItem(Item):
+    """Cars container (dictionary-like object) for scraped data"""
+    make = Field()
+    model = Field()
+    description = Field()
+    price = Field()
+    curr_date = Field()
+    f1name = Field()
+    f2name = Field()
+    f3name = Field()
+    f4name = Field()
+    f5name = Field()
+    f6name = Field()
+    f7name = Field()
+    f8name = Field()
+    f9name = Field()
+    f10name = Field()
+    f11name = Field()
+    f12name = Field()
+    f1value = Field()
+    f2value = Field()
+    f3value = Field()
+    f4value = Field()
+    f5value = Field()
+    f6value = Field()
+    f7value = Field()
+    f8value = Field()
+    f9value = Field()
+    f10value = Field()
+    f11value = Field()
+    f12value = Field()
+    '''year = Field()
+    mileage = Field()
+    condition = Field()
+    colour = Field()
+    transmission = Field()
+    fuel_type = Field()
+    options = Field()
+    area = Field()
+    car_id = Field()'''
+
 class NewCarsItem(Item):
     """Cars container (dictionary-like object) for scraped data"""
     make = Field()
