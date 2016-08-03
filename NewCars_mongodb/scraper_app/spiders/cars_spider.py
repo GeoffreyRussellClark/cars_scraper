@@ -15,12 +15,11 @@ class UsedCarsSpider(CrawlSpider):
 
     name = "UsedCarsSpider"
     allowed_domains = ["www.cars.co.za"]#don't add "http" otherwise will give "filtered offsite request error"
-    start_urls = ["http://www.cars.co.za/usedcars/Citroen"]
+    start_urls = ["http://www.cars.co.za/usedcars.php"]
 	
 	#links to be followed stating with the outermost link
     rules = [
-        #Rule(LinkExtractor(restrict_xpaths='//div[@class="makesDropdown"]/div[@class="dropdown_label"]/div'), callback="parse_items", follow=True),
-		#Rule(LinkExtractor(allow=(), restrict_xpaths='//div[@class="col_main jq_submit"]/div[@class="box"]'), callback="parse_items", follow=True),
+        Rule(LinkExtractor(restrict_xpaths='//div[@class="dropdown_label used"]/div[2]'), callback="parse_items", follow=True),
 		Rule(LinkExtractor(allow=(), restrict_xpaths='//div[@id="results"]/div[@class="item clearfix"]/div[@class="left_block"]/h2/a'), callback="parse_items", follow=True),
 		Rule(LinkExtractor(allow=(), restrict_xpaths='//div[@class="box box-tighter clearfix"]/ul[@class="pagination pagination_right"]/li[@class="next"]/a'), callback="parse_items", follow=True),
 		#Rule(LinkExtractor(allow=()), callback="parse_items", follow=True),

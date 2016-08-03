@@ -25,7 +25,7 @@ MONGODB_COLLECTION = "new_carscoza"'''
 
 
 #To enable us to follow paths
-DEPTH_LIMIT = 1
+DEPTH_LIMIT = 550
 DEPTH_PRIORITY = 1
 
 #slow down the bot so that it doesn't put too much pressure on the website - actual delay is randomised by default
