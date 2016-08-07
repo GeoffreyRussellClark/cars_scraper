@@ -1,4 +1,7 @@
 
+#from scrapy.contrib.pipeline import images
+import os
+
 BOT_NAME = 'CarsBot'
 
 SPIDER_MODULES = ['scraper_app.spiders']
@@ -23,10 +26,16 @@ MONGODB_PORT = 27017
 MONGODB_DB = "scrape"
 MONGODB_COLLECTION = "new_carscoza"'''
 
+#image Pipeline
+ITEM_PIPELINES = {
+   'scrapy.contrib.pipeline.images.FilesPipeline': 1,
+}
+#image storage location (for image scrapers)
+FILES_STORE = "~/Documents/orion/ScrapedCarImages/NewCars"
 
 #To enable us to follow paths
-DEPTH_LIMIT = 550
-DEPTH_PRIORITY = 1
+DEPTH_LIMIT = 2
+DEPTH_PRIORITY = 2
 
 #slow down the bot so that it doesn't put too much pressure on the website - actual delay is randomised by default
 DOWNLOAD_DELAY = 1.5
