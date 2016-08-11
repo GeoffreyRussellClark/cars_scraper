@@ -1,5 +1,42 @@
 from scrapy.item import Item, Field
 
+   
+class UsedCarsImagesItem(Item):
+    """Cars container (dictionary-like object) for scraped data"""
+    make = Field()
+    model = Field()
+    description = Field()
+    curr_date = Field()
+    file_urls = Field()
+    files = Field()
+    
+class NewCarsImagesItem(Item):
+    """Cars container (dictionary-like object) for scraped data"""
+    make = Field()
+    model = Field()
+    version = Field()
+    curr_date = Field()
+    file_urls = Field()
+    files = Field()
+    
+#Item for Auto Trader
+class UsedCarsATItem(Item):
+    """Cars container (dictionary-like object) for scraped data"""
+    make = Field()
+    model = Field()
+    description = Field()
+    price = Field()
+    curr_date = Field()
+    year = Field()
+    milage = Field()
+    body_type = Field()
+    engine_capacity = Field()
+    fuel_type = Field()
+    used_new = Field()
+    comments = Field()
+    file_urls = Field()
+    files = Field()
+    
 class UsedCarsItem(Item):
     """Cars container (dictionary-like object) for scraped data"""
     make = Field()
@@ -31,15 +68,6 @@ class UsedCarsItem(Item):
     f10value = Field()
     f11value = Field()
     f12value = Field()
-    
-class NewCarsImagesItem(Item):
-    """Cars container (dictionary-like object) for scraped data"""
-    make = Field()
-    model = Field()
-    version = Field()
-    curr_date = Field()
-    file_urls = Field()
-    files = Field()
     
 class NewCarsItem(Item):
     """Cars container (dictionary-like object) for scraped data"""
