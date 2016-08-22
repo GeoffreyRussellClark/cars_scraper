@@ -2,17 +2,17 @@
 #from scrapy.contrib.pipeline import images
 import os
 
-BOT_NAME = 'CarsBot'
+BOT_NAME = 'Rio'
 
 SPIDER_MODULES = ['scraper_app.spiders']
 
 #To enable us to follow paths
 # this should be set to 3 for the new car spiders and around 600 for the used car spiders.
-DEPTH_LIMIT = 3
-DEPTH_PRIORITY = 3
+DEPTH_LIMIT = 1000
+DEPTH_PRIORITY = 1000
 
 #slow down the bot so that it doesn't put too much pressure on the website - actual delay is randomised by default
-DOWNLOAD_DELAY = 1.2
+DOWNLOAD_DELAY = 1.5
 
 #Postgresql Pipeline
 '''ITEM_PIPELINES = {'scraper_app.pipelines.NewCarsPipeline': 100}

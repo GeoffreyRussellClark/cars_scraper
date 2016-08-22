@@ -19,20 +19,23 @@ class UsedCarsATSpider(CrawlSpider):
 
     name = "UsedCarsATSpider"
     allowed_domains = ["www.autotrader.co.za"]#don't add "http" otherwise will give "filtered offsite request error"
-    start_urls = ["http://www.autotrader.co.za/page/10/search"]
+    start_urls = ["http://www.autotrader.co.za/used-cars/make"]
+
 	
 	#links to be followed stating with the outermost link
     rules = [
-		Rule(LinkExtractor(allow=(), restrict_xpaths='//div[@class="col-xs-12 col-sm-5 text-center"]/ul[@class="search-paginator control pull-right-sm"]/li[@class="pagination-item to-next-page text-center go-up"]/a'), callback="parse_items", follow=True),
+		Rule(LinkExtractor(allow=(), deny=('used-cars/toyota\.htm'), restrict_xpaths='//table[@class="table"]/tbody/tr/td/a[contains(@class,"omnitureTracking")]'), callback="parse_items", follow=True),#link from tha makes page to the pages of the actual makes.	
+		Rule(LinkExtractor(allow=(), restrict_xpaths='//li[contains(@class,"to-next-page")]/a'), callback="parse_items", follow=True),
 		#Rule(LinkExtractor(allow=()), callback="parse_items", follow=True),
     ]
 
-		    
+		 
     def parse_items(self, response):
         
         #Default callback used by Scrapy to process downloaded responses
         
         selector = Selector(response)
+        
         print('Did something')
         # iterate over cars
         for UsedCarsSelector in selector.xpath('//div[contains(@class,"listing-item clearfix") and not(contains(@class,"adv") or contains(@class,"tfd"))]'):
@@ -58,7 +61,7 @@ class UsedCarsATSpider(CrawlSpider):
 			loader.add_value('year', car_description[0:4])
 			
 			loader.add_xpath('used_new', './/div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/span/text()')
-			loader.add_xpath('price', './/div[@class="price price col-xs-4 col-sm-3 col-middle text-right no-padding"]/text()')
+			loader.add_xpath('price', './/div[contains(@class,"price")]/text()')
 			loader.add_xpath('milage', './/div[@class="vehicle-spec hidden-xs"]/span[@class="mileage"]/text()')
 			loader.add_xpath('body_type', './/div[@class="vehicle-spec hidden-xs"]/span[@class="body-type"]/text()')
 			loader.add_xpath('engine_capacity', './/div[@class="vehicle-spec hidden-xs"]/span[@class="engine-capacity"]/text()')
@@ -66,25 +69,56 @@ class UsedCarsATSpider(CrawlSpider):
 			loader.add_xpath('comments', './/div[@class="sellers-comment module"]/text()')
 			
 			loader.add_value('curr_date', unicode(time.strftime("%Y/%m/%d"),"utf-8"))
-			'''
+			
+			
 			#get main advertised image
 			ImgSelector = UsedCarsSelector.xpath('.//div[contains(@class,"main-image-module")]')
 			src = ImgSelector.xpath('.//@src')
 			imgURL = []
 			imgURL = src.extract()
-			loader.add_value('file_urls', [imgURL])
-			'''
+			#print imgURL
+			loader.add_value('file_urls', imgURL)
+			
 			yield loader.load_item()
 			
-			'''#get other thumbnail images - bit tricky to extract URLs
-			for ImgSelector in UsedCarsSelector.xpath('.//div[contains(@class,"thumbnails-module")]/a/div[@class="thumb-img"]'):
+			#get other thumbnail images - bit tricky to extract URLs
+			#leave this for now
+			'''for ImgSelector in UsedCarsSelector.xpath('.//div[contains(@class,"thumbnails-module")]/a/div[@class="thumb-img"]'):
+				loader = ItemLoader(UsedCarsATItem(), selector=UsedCarsSelector)
+				
+				#take the link href and extract from it the make and model.
+				car_href = UsedCarsSelector.xpath('.//div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/h2/a/@href').extract()
+				car_href_part = ''
+				car_href_part = car_href[0]#car_href comes as a list and we need a string in order to use the split function
+				car_href_list = car_href_part.split('/')
+							
+				loader.add_value('make', car_href_list[4])
+				loader.add_value('model', car_href_list[5])
+				
+				#get description and extract the Year from it and insert seperately
+				car_description = UsedCarsSelector.xpath('.//div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/h2/a/text()').extract()
+				
+				loader.add_value('description', car_description)
+				loader.add_value('year', car_description[0:4])
+				
+				loader.add_xpath('used_new', './/div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/span/text()')
+				loader.add_xpath('price', './/div[contains(@class,"price")]/text()')
+				loader.add_xpath('milage', './/div[@class="vehicle-spec hidden-xs"]/span[@class="mileage"]/text()')
+				loader.add_xpath('body_type', './/div[@class="vehicle-spec hidden-xs"]/span[@class="body-type"]/text()')
+				loader.add_xpath('engine_capacity', './/div[@class="vehicle-spec hidden-xs"]/span[@class="engine-capacity"]/text()')
+				loader.add_xpath('fuel_type', './/div[@class="vehicle-spec hidden-xs"]/span[@class="fuel-type"]/text()')
+				loader.add_xpath('comments', './/div[@class="sellers-comment module"]/text()')
+				
+				loader.add_value('curr_date', unicode(time.strftime("%Y/%m/%d"),"utf-8"))
+				
+				#thumbnail images
 				StyleStr = ImgSelector.xpath('.//@style').extract()
 				URLStr = StyleStr[len('background-image: url('):len(StyleStr)-1]
 
 				#Image URLs need to be lists
 				imgURL = []
 				imgURL = URLStr
-				loader.add_value('file_urls', [imgURL])
+				loader.add_value('file_urls', imgURL)
 				
 				yield loader.load_item()'''
 			
