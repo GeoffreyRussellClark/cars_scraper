@@ -42,14 +42,14 @@ http://newcoder.io/scrape/
 
 ### Recommended Web-scraping debugging method ###
 
-use the scrapy shell. Call the webpage and inspect the elements manually to see what scrapy can see.
+Use the scrapy shell. Call the webpage and inspect the elements manually to see what scrapy can see.
 
 #### Syntax: ####
 
-scrapy shell <url>
-data = response.xpath('<xpath to element>')
-for i in data.xpath('.//<sub-level xpath to element>'):
-    print i.extract()
+* scrapy shell <url>
+* data = response.xpath('<xpath to element>')
+* for i in data.xpath('.//<sub-level xpath to element>'):
+*     print i.extract()
 
 ### Who do I talk to? ###
 
