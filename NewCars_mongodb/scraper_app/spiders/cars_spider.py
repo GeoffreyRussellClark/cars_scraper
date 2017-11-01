@@ -21,45 +21,45 @@ class UsedCarsATSpider(CrawlSpider):
     allowed_domains = ["www.autotrader.co.za"]#don't add "http" otherwise will give "filtered offsite request error"
     start_urls = ["http://www.autotrader.co.za/used-cars/make"]
 
-	
+
 	#links to be followed stating with the outermost link
     rules = [
-		Rule(LinkExtractor(allow=(), deny=('used-cars/toyota\.htm'), restrict_xpaths='//table[@class="table"]/tbody/tr/td/a[contains(@class,"omnitureTracking")]'), callback="parse_items", follow=True),#link from tha makes page to the pages of the actual makes.	
+		Rule(LinkExtractor(allow=(), deny=('used-cars/toyota\.htm'), restrict_xpaths='//table[@class="table"]/tbody/tr/td/a[contains(@class,"omnitureTracking")]'), callback="parse_items", follow=True),#link from tha makes page to the pages of the actual makes.
 		Rule(LinkExtractor(allow=(), restrict_xpaths='//li[contains(@class,"to-next-page")]/a'), callback="parse_items", follow=True),
 		#Rule(LinkExtractor(allow=()), callback="parse_items", follow=True),
     ]
 
-		 
+
     def parse_items(self, response):
-        
+
         #Default callback used by Scrapy to process downloaded responses
-        
+
         selector = Selector(response)
-        
+
         print('Did something')
         # iterate over cars
         for UsedCarsSelector in selector.xpath('//div[contains(@class,"listing-item clearfix") and not(contains(@class,"adv") or contains(@class,"tfd"))]'):
 			loader = ItemLoader(UsedCarsATItem(), selector=UsedCarsSelector)
-			
+
 			# define processors
 			#loader.default_input_processor = MapCompose(unicode.strip)
 			#loader.default_output_processor = Join()
-				
+
 			#take the link href and extract from it the make and model.
 			car_href = UsedCarsSelector.xpath('.//div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/h2/a/@href').extract()
 			car_href_part = ''
 			car_href_part = car_href[0]#car_href comes as a list and we need a string in order to use the split function
 			car_href_list = car_href_part.split('/')
-						
+
 			loader.add_value('make', car_href_list[4])
 			loader.add_value('model', car_href_list[5])
-			
+
 			#get description and extract the Year from it and insert seperately
 			car_description = UsedCarsSelector.xpath('.//div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/h2/a/text()').extract()
-			
+
 			loader.add_value('description', car_description)
 			loader.add_value('year', car_description[0:4])
-			
+
 			loader.add_xpath('used_new', './/div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/span/text()')
 			loader.add_xpath('price', './/div[contains(@class,"price")]/text()')
 			loader.add_xpath('milage', './/div[@class="vehicle-spec hidden-xs"]/span[@class="mileage"]/text()')
@@ -67,10 +67,10 @@ class UsedCarsATSpider(CrawlSpider):
 			loader.add_xpath('engine_capacity', './/div[@class="vehicle-spec hidden-xs"]/span[@class="engine-capacity"]/text()')
 			loader.add_xpath('fuel_type', './/div[@class="vehicle-spec hidden-xs"]/span[@class="fuel-type"]/text()')
 			loader.add_xpath('comments', './/div[@class="sellers-comment module"]/text()')
-			
+
 			loader.add_value('curr_date', unicode(time.strftime("%Y/%m/%d"),"utf-8"))
-			
-			
+
+
 			#get main advertised image
 			ImgSelector = UsedCarsSelector.xpath('.//div[contains(@class,"main-image-module")]')
 			src = ImgSelector.xpath('.//@src')
@@ -78,29 +78,29 @@ class UsedCarsATSpider(CrawlSpider):
 			imgURL = src.extract()
 			#print imgURL
 			loader.add_value('file_urls', imgURL)
-			
+
 			yield loader.load_item()
-			
+
 			#get other thumbnail images - bit tricky to extract URLs
 			#leave this for now
 			'''for ImgSelector in UsedCarsSelector.xpath('.//div[contains(@class,"thumbnails-module")]/a/div[@class="thumb-img"]'):
 				loader = ItemLoader(UsedCarsATItem(), selector=UsedCarsSelector)
-				
+
 				#take the link href and extract from it the make and model.
 				car_href = UsedCarsSelector.xpath('.//div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/h2/a/@href').extract()
 				car_href_part = ''
 				car_href_part = car_href[0]#car_href comes as a list and we need a string in order to use the split function
 				car_href_list = car_href_part.split('/')
-							
+
 				loader.add_value('make', car_href_list[4])
 				loader.add_value('model', car_href_list[5])
-				
+
 				#get description and extract the Year from it and insert seperately
 				car_description = UsedCarsSelector.xpath('.//div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/h2/a/text()').extract()
-				
+
 				loader.add_value('description', car_description)
 				loader.add_value('year', car_description[0:4])
-				
+
 				loader.add_xpath('used_new', './/div[@class="title-module col-xs-8 col-sm-9 clearfix no-padding"]/span/text()')
 				loader.add_xpath('price', './/div[contains(@class,"price")]/text()')
 				loader.add_xpath('milage', './/div[@class="vehicle-spec hidden-xs"]/span[@class="mileage"]/text()')
@@ -108,9 +108,9 @@ class UsedCarsATSpider(CrawlSpider):
 				loader.add_xpath('engine_capacity', './/div[@class="vehicle-spec hidden-xs"]/span[@class="engine-capacity"]/text()')
 				loader.add_xpath('fuel_type', './/div[@class="vehicle-spec hidden-xs"]/span[@class="fuel-type"]/text()')
 				loader.add_xpath('comments', './/div[@class="sellers-comment module"]/text()')
-				
+
 				loader.add_value('curr_date', unicode(time.strftime("%Y/%m/%d"),"utf-8"))
-				
+
 				#thumbnail images
 				StyleStr = ImgSelector.xpath('.//@style').extract()
 				URLStr = StyleStr[len('background-image: url('):len(StyleStr)-1]
@@ -119,16 +119,16 @@ class UsedCarsATSpider(CrawlSpider):
 				imgURL = []
 				imgURL = URLStr
 				loader.add_value('file_urls', imgURL)
-				
+
 				yield loader.load_item()'''
-			
-			
+
+
 class UsedCarsSpider(CrawlSpider):
 
     name = "UsedCarsSpider"
     allowed_domains = ["www.cars.co.za"]#don't add "http" otherwise will give "filtered offsite request error"
     start_urls = ["http://www.cars.co.za/usedcars.php"]
-	
+
 	#links to be followed stating with the outermost link
     rules = [
         Rule(LinkExtractor(restrict_xpaths='//div[@class="dropdown_label used"]/div[2]'), callback="parse_items", follow=True),
@@ -137,23 +137,23 @@ class UsedCarsSpider(CrawlSpider):
 		#Rule(LinkExtractor(allow=()), callback="parse_items", follow=True),
     ]
 
-		    
+
     def parse_items(self, response):
-        
+
         #Default callback used by Scrapy to process downloaded responses
-        
+
         selector = Selector(response)
-        
-        #the make and model and version will be the same for all data on a page 
-		#put into try/except so that intermediate car make pages don't give errors 
+
+        #the make and model and version will be the same for all data on a page
+		#put into try/except so that intermediate car make pages don't give errors
         try:
 			car_make = selector.xpath('//div[@id="breadcrumb"]/ul/li/a/text()').extract()[2]
 			car_model = selector.xpath('//div[@id="breadcrumb"]/ul/li[@class="second-last"]/a/text()').extract()
 			car_description = selector.xpath('//div[@id="breadcrumb"]/ul/li[@class="last"]/text()').extract()
-			car_price = selector.xpath('//div[@id="details"]/div[@class="left"]/div[@class="box vehicledetails"]/div[@class="price"]/text()').extract()	
+			car_price = selector.xpath('//div[@id="details"]/div[@class="left"]/div[@class="box vehicledetails"]/div[@class="price"]/text()').extract()
         except Exception:
 			pass
-		
+
         # iterate over cars
         for UsedCarsSelector in selector.xpath('//div[@id="details"]/div[@class="left"]/div[@class="box vehicledetails"]/table[1]'):
 			loader = ItemLoader(UsedCarsItem(), selector=UsedCarsSelector)
@@ -161,7 +161,7 @@ class UsedCarsSpider(CrawlSpider):
 			# define processors
 			loader.default_input_processor = MapCompose(unicode.strip)
 			loader.default_output_processor = Join()
-			
+
 			loader.add_value('make', car_make)
 			loader.add_value('model', car_model)
 			loader.add_value('description', car_description)
@@ -198,7 +198,7 @@ class UsedCarsSpider(CrawlSpider):
 				pass
 
 			yield loader.load_item()
-			
+
         # extract the 'Next' link from the pagination, load it, and parse it
         #nextPage = response.xpath('//div[@class="box box-tighter clearfix"]/ul[@class="pagination pagination_right"]/li[@class="next"]/a')
         #yield Request(nextPage.xpath("@href").extract()[0], self.parse_items)
@@ -211,7 +211,7 @@ class NewCarsSpider(CrawlSpider):
     name = "NewCarsSpider"
     allowed_domains = ["www.cars.co.za"]#don't add "http" otherwise will give "filtered offsite request error"
     start_urls = ["http://www.cars.co.za/newcars"]
-	
+
 	#links to be followed stating with the outermost link
     rules = [
         Rule(LinkExtractor(restrict_xpaths='//div[@class="makesDropdown"]/div[@class="dropdown_label"]/div'), callback="parse_items", follow=True),
@@ -219,31 +219,30 @@ class NewCarsSpider(CrawlSpider):
 		Rule(LinkExtractor(allow=(), restrict_xpaths='//table[@id="variant_table"]/tbody/tr/td[@style="width:200px;"]/strong/a'), callback="parse_items", follow=True),
 		#Rule(LinkExtractor(allow=()), callback="parse_items", follow=True),
     ]
-    
+
     '''cars_list_xpath = '//div/div[@class="cat_bg"]/div[@class="fl width_70"]/div[@id="price_list"]/ul[@class="price_list_col2"]/li/ul'
     item_fields = {
 		'price': './/li[@class="li85"]/text()',
-		'intro_date' = 
-		'model_intro_date' = 
+		'intro_date' =
+		'model_intro_date' =
     }'''
-		    
+
     def parse_items(self, response):
-        
+
         #Default callback used by Scrapy to process downloaded responses
-        
+
         selector = Selector(response)
-		
-        
-        #the make and model and version will be the same for all data on a page 
-		#put into try/except so that intermediate car make pages don't give errors 
+
+
+        #the make and model and version will be the same for all data on a page
+		#put into try/except so that intermediate car make pages don't give errors
         try:
-			car_make = selector.xpath('//div[@id="breadcrumb"]/ul/li/a/text()').extract()[2]
-			car_model = selector.xpath('//div[@id="breadcrumb"]/ul/li[@class="second-last"]/a/text()').extract()
-			car_version = selector.xpath('//div[@id="breadcrumb"]/ul/li[@class="last"]/text()').extract()
-						
+			car_make = selector.xpath('//div[@class="breadcrumb-bar"]/div[@class="container"]/ul/li/a/text()').extract()[2]
+			car_model = selector.xpath('//div[@class="breadcrumb-bar"]/div[@class="container"]/ul/li[@class="second-last"]/a/text()').extract()
+			car_version = selector.xpath('//div[@class="breadcrumb-bar"]/div[@class="container"]/ul/li[@class="last"]/text()').extract()
         except Exception:
 			pass
-		
+
         # iterate over cars
         for NewCarsSelector in selector.xpath('//div[@id="details"]/div[@class="left"]/div[@class="box vehicledetails"]'):
 			loader = ItemLoader(NewCarsItem(), selector=NewCarsSelector)
@@ -251,27 +250,27 @@ class NewCarsSpider(CrawlSpider):
 			# define processors
 			loader.default_input_processor = MapCompose(unicode.strip)
 			loader.default_output_processor = Join()
-			
+
 			loader.add_value('make', car_make)
 			loader.add_value('model', car_model)
 			loader.add_value('version', car_version)
 			loader.add_xpath('price', './/div[@class="price black"]/text()')
 			loader.add_value('curr_date', unicode(time.strftime("%Y/%m/%d"),"utf-8"))
-			
+
 			field_counter = 1
 			break_ind = False
 			for i in range(2,11):
 				field_data = selector.xpath('//div[@class="box vehicledetails"]/div[@class="box"]/div[@class="tab_panels"]/div[@id="tabs-'+str(i)+'"]/table[@class="table"]')
-				
-				
+
+
 				fNameValue = []
 				for i_data in field_data.xpath('.//td/text()'):
 					f = i_data.extract()
 					#if the value is actually a tick then rather make the value something easier to work with later on.
 					if f == u'\u2714':
 						f = u'true'
-					fNameValue.append(f) 
-								
+					fNameValue.append(f)
+
 				odd_ind = True
 				for nameValue in fNameValue:
 					if odd_ind:
@@ -284,10 +283,10 @@ class NewCarsSpider(CrawlSpider):
 						if field_counter > 150:#this number is the max number of items that we can have.
 							break_ind = True
 							break
-				
+
 				if break_ind == True:
 					break
-			
+
 			yield loader.load_item()
 
 
@@ -297,7 +296,7 @@ class UsedCarsImageSpider(CrawlSpider):
     name = "UsedCarsImageSpider"
     allowed_domains = ["www.cars.co.za"]#don't add "http" otherwise will give "filtered offsite request error"
     start_urls = ["http://www.cars.co.za/usedcars.php"]
-	
+
 	#links to be followed stating with the outermost link
     rules = [
         Rule(LinkExtractor(restrict_xpaths='//div[@class="dropdown_label used"]/div[2]'), callback="parse_items", follow=True),
@@ -306,39 +305,39 @@ class UsedCarsImageSpider(CrawlSpider):
 		#Rule(LinkExtractor(allow=()), callback="parse_items", follow=True),
     ]
 
-		    
+
     def parse_items(self, response):
-        
+
         #Default callback used by Scrapy to process downloaded responses
-        
+
         selector = Selector(response)
         CarImgSrc = selector.xpath('.//*[@id="carousel"]')
-        
-        #the make and model and version will be the same for all data on a page 
-		#put into try/except so that intermediate car make pages don't give errors 
+
+        #the make and model and version will be the same for all data on a page
+		#put into try/except so that intermediate car make pages don't give errors
         try:
 			car_make = selector.xpath('//div[@id="breadcrumb"]/ul/li/a/text()').extract()[2]
 			car_model = selector.xpath('//div[@id="breadcrumb"]/ul/li[@class="second-last"]/a/text()').extract()
 			car_description = selector.xpath('//div[@id="breadcrumb"]/ul/li[@class="last"]/text()').extract()
         except Exception:
 			pass
-		
+
         # iterate over cars
         for scr in CarImgSrc.xpath('.//@src'):
 			#print('Enter')
 			loader = ItemLoader(UsedCarsImagesItem(), selector=CarImgSrc)
-			
+
 			#Image URLs need to be lists
 			imgURL = []
 			imgURL = scr.extract()
-			loader.add_value('file_urls', [imgURL])	
-			
+			loader.add_value('file_urls', [imgURL])
+
 			loader.add_value('make', car_make)
 			loader.add_value('model', car_model)
 			loader.add_value('description', car_description)
-			loader.add_value('curr_date', unicode(time.strftime("%Y/%m/%d"),"utf-8"))		
-			
-			yield loader.load_item()	
+			loader.add_value('curr_date', unicode(time.strftime("%Y/%m/%d"),"utf-8"))
+
+			yield loader.load_item()
 
 #NewCarsImageSpider
 class NewCarsImageSpider(CrawlSpider):
@@ -346,7 +345,7 @@ class NewCarsImageSpider(CrawlSpider):
     name = "NewCarsImageSpider"
     allowed_domains = ["www.cars.co.za"]#don't add "http" otherwise will give "filtered offsite request error"
     start_urls = ["http://www.cars.co.za/newcars"]
-	
+
 	#links to be followed stating with the outermost link
     rules = [
         Rule(LinkExtractor(restrict_xpaths='//div[@class="makesDropdown"]/div[@class="dropdown_label"]/div'), callback="parse_items", follow=True),
@@ -354,40 +353,40 @@ class NewCarsImageSpider(CrawlSpider):
 		Rule(LinkExtractor(allow=(), restrict_xpaths='//table[@id="variant_table"]/tbody/tr/td[@style="width:200px;"]/strong/a'), callback="parse_items", follow=True),
 		#Rule(LinkExtractor(allow=()), callback="parse_items", follow=True),
     ]
-		    
+
     def parse_items(self, response):
-        
+
         #Default callback used by Scrapy to process downloaded responses
-        
+
         selector = Selector(response)
         CarImgSrc = selector.xpath('.//*[@id="carousel"]')
-        
-        #the make and model and version will be the same for all data on a page 
-		#put into try/except so that intermediate car make pages don't give errors 
+
+        #the make and model and version will be the same for all data on a page
+		#put into try/except so that intermediate car make pages don't give errors
         try:
-			car_make = selector.xpath('//div[@id="breadcrumb"]/ul/li/a/text()').extract()[2]
-			car_model = selector.xpath('//div[@id="breadcrumb"]/ul/li[@class="second-last"]/a/text()').extract()
-			car_version = selector.xpath('//div[@id="breadcrumb"]/ul/li[@class="last"]/text()').extract()	
+			car_make = selector.xpath('//div[@class="breadcrumb-bar"]/div[@class="container"]/ul/li/a/text()').extract()[2]
+			car_model = selector.xpath('//div[@class="breadcrumb-bar"]/div[@class="container"]/ul/li[@class="second-last"]/a/text()').extract()
+			car_version = selector.xpath('//div[@class="breadcrumb-bar"]/div[@class="container"]/ul/li[@class="last"]/text()').extract()
         except Exception:
 			pass
-		
+
         # iterate over cars
         for scr in CarImgSrc.xpath('.//@src'):
 			#print('Enter')
 			loader = ItemLoader(NewCarsImagesItem(), selector=CarImgSrc)
-			
+
 			#Image URLs need to be lists
 			imgURL = []
 			imgURL = scr.extract()
-			loader.add_value('file_urls', [imgURL])	
-			
+			loader.add_value('file_urls', [imgURL])
+
 			# define processors
 			#loader.default_input_processor = MapCompose(unicode.strip)
 			#loader.default_output_processor = Join()
-			
+
 			loader.add_value('make', car_make)
 			loader.add_value('model', car_model)
 			loader.add_value('version', car_version)
-			loader.add_value('curr_date', unicode(time.strftime("%Y/%m/%d"),"utf-8"))		
-			
-			yield loader.load_item()	
+			loader.add_value('curr_date', unicode(time.strftime("%Y/%m/%d"),"utf-8"))
+
+			yield loader.load_item()
