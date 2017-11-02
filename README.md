@@ -1,6 +1,6 @@
 # README #
 
-### What is this repository for? ###
+## What is this repository for? ##
 
 * This repo houses a web-scraper coded in python using the scrapy library. It contains four spiders that scrape data from the cars.co.za website. This website is a used by individuals and dealers to buy and sell used cars. As such it contains vast amount of car metadata as well as images of vehicles. It also has a section where it advertises new cars and shows their specs. The four spiders scrape either images or vehicle meta data for either new or used vehicles.
 
@@ -16,7 +16,7 @@
 
 ### Recommended Tutorial ###
 
-http://newcoder.io/scrape/
+* http://newcoder.io/scrape/
 
 ### Sources/inspiration for the code ###
 
@@ -27,6 +27,10 @@ http://newcoder.io/scrape/
 ### The website that we scrape ###
 
 * http://www.cars.co.za/
+
+### Output ###
+
+* A csv file - for relatively small amounts of data I find csv files easier to work with than say a database.
 
 ### Recommended Web-scraping debugging method ###
 
@@ -39,6 +43,6 @@ Use the scrapy shell. Call the webpage and inspect the elements manually to see 
 * for i in data.xpath('.//<sub-level xpath to element>'):
 *     print i.extract()
 
-### Who do I talk to? ###
+### Author ###
 
 Geoffrey Clark
