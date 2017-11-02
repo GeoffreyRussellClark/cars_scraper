@@ -4,11 +4,12 @@
 
 * This repo houses a web-scraper coded in python using the scrapy library. It contains four spiders that scrape data from the cars.co.za website. This website is a used by individuals and dealers to buy and sell used cars. As such it contains vast amount of car metadata as well as images of vehicles. It also has a section where it advertises new cars and shows their specs. The four spiders scrape either images or vehicle meta data for either new or used vehicles.
 
-### To start: ###
+### Getting started: ###
 
 * Pull this repository to your local machine using git.
 * Create a virtual environment (I favour virtualEnvWrapper)
 * Install the required libraries with: "pip install -r requirements.txt"
+* Checkout the file in the repo "HowToExecuteSpiders.md" for instructions as to how to execute each spider.
 
 ### Directory Overview: ###
 
@@ -34,7 +35,7 @@
 
 ### Recommended Web-scraping debugging method ###
 
-Use the scrapy shell. Call the webpage and inspect the elements manually to see what scrapy can see. This really helps to test xpaths.
+	Use the scrapy shell. Call the webpage and inspect the elements manually to see what scrapy can see. This really helps to test xpaths.
 
 #### Syntax: ####
 
