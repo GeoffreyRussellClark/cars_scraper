@@ -18,7 +18,7 @@ cd cars_scraper
 workon </virtualenvname/>
 scrapy crawl NewCarsSpider -o NewCars.csv
 
-It takes approximately x minutes to run on my computer
+It takes approximately an hour and a half to run on my computer
 
 ### NewCarsImageSpider ###
 
